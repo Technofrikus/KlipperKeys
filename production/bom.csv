@@ -1,0 +1,4 @@
+Designator,Footprint,Quantity,Value,LCSC Part #
+"H1, H2, H3, H4",MountingHole_3.2mm_M3,4,MountingHole,
+J1,PinHeader_1x06_P2.54mm_Vertical,1,Conn_01x06_Socket,
+"MX1, MX2, MX3, MX4, MX5",SW_MX_1u,5,MX_SW_solder,
