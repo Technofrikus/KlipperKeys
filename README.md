@@ -4,6 +4,8 @@ __For pictures etc see: https://www.printables.com/model/539404-klipper-keys-key
 
 This “keyboard” with 5 keys gets conneted directly to the GPIOs of the RasbperryPi. This way no MCU or anything fancy is needed. The case is tested on a vCore 3.1 400mm with 3030 profiles. Not sure about clearance on other printers. But electrically should also work for Vorons etc.
 
+For me light switching during printing is not super reliable. Not sure why. Everything else works great.
+
 The PCB is OpenSource and all files, including production files, can be found here:
 
 https://github.com/Technofrikus/KlipperKeys
@@ -43,40 +45,39 @@ Try these printable relegendable keycaps I used with some tips for printing: htt
 The Pins are named on the PCB. Also check the picture for the marked pins. Reference: https://pinout.xyz
 Configuration
 
-You need to make your Pi a Klipper-MCU so you can access the GPIOs from Klipper. Just follow this simple guide: https://www.klipper3d.org/RPi_microcontroller.html
-I thought all pins above GPIO8 are pulled down by default, according to this: http://www.panu.it/raspberry/ But for me several keys were triggered randomly during bootup, not after. So it is safer to activate the internal PullDownResistor.
-
-Go to /boot/config.txt and add these two lines
-Thanks for this info goes to here: https://www.reddit.com/r/klippers/comments/ssj67j/gcode_button_as_eswitch/ 
-```
-## GPIO pins pulled down for Klipper Keys
-gpio=9,10,17,22,27=pd
-```
- 
-
 Then add these settings to your macro-file. I have a user-macro-cfg which I included from printer.cfg to have these things separate. But you can also put it directly in the printer.cfg
 These gcodes are custom to my setup (lights) and RatOS (unload_filament). Please change these to your liking and printer setup.
 ```
 [gcode_button button_light]
-pin: !rpi:gpio17
+pin: ~rpi:gpio17
 press_gcode: CASE_LIGHTS_TOGGLE
 
 [gcode_button button_load]
-pin: !rpi:gpio9
+pin: ~rpi:gpio9
 press_gcode: LOAD_FILAMENT
 
 [gcode_button button_unload]
-pin: !rpi:gpio10
+pin: ~rpi:gpio10
 press_gcode: UNLOAD_FILAMENT
 
 [gcode_button button_PLATemp]
-pin: !rpi:gpio22
+pin: ~rpi:gpio22
 press_gcode:
  SET_HEATER_TEMPERATURE HEATER=extruder TARGET=200
  SET_HEATER_TEMPERATURE HEATER=heater_bed TARGET=60
 
 [gcode_button button_cooldown]
-pin: !rpi:gpio27
+pin: ~rpi:gpio27
 press_gcode:
  TURN_OFF_HEATERS
 ```
+ 
+
+If you want to use a Button as an Emergency-Stop, use this code:
+```
+[gcode_button ESTOP_BUTTON]
+pin: ...
+press_gcode:  
+   {action_emergency_stop("Impending Doom Averted!")}
+```
+I have not tested this, but ThaoChan provided it and it works for him. Thanks again Thao for your help with the Config! Check it out here: https://www.reddit.com/r/klippers/comments/ssj67j/comment/ju6ld9p/?utm_source=reddit&utm_medium=web2x&context=3 
